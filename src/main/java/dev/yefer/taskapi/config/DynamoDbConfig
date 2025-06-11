@@ -1,0 +1,53 @@
+package dev.yefer.taskapi.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
+@Configuration
+public class DynamoDbConfig {
+
+   
+    @Value("${aws.region:us-west-1}")
+    private String awsRegion;
+    
+    @Value("${aws.dynamodb.table-name:task-yefer}")
+    private String tableName;
+
+    @Bean
+    public DynamoDbClient dynamoDbClient() {
+        try {
+            System.out.println("=== Configurando DynamoDB ===");
+            System.out.println("Región configurada: " + awsRegion);
+            System.out.println("Tabla DynamoDB: " + tableName);
+            
+          
+            DynamoDbClient client = DynamoDbClient.builder()
+                    .region(Region.of(awsRegion))
+                    .credentialsProvider(DefaultCredentialsProvider.create())
+                    .build();
+            
+            System.out.println("✅ DynamoDB Client configurado exitosamente");
+            return client;
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error configurando DynamoDB Client:");
+            System.err.println("   Región: " + awsRegion);
+            System.err.println("   Tabla: " + tableName);
+            System.err.println("   Error: " + e.getMessage());
+            e.printStackTrace();
+            
+       
+            throw new RuntimeException("No se pudo configurar DynamoDB. Verifica las credenciales y región.", e);
+        }
+    }
+    
+
+    @Bean
+    public String dynamoTableName() {
+        return tableName;
+    }
+}
