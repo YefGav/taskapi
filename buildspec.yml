@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+  build:
+    commands:
+      - echo "Iniciando la compilación con Maven..."
+      - mvn clean package -DskipTests
+      - echo "Compilación completada exitosamente"
+
+artifacts:
+  files:
+    - target/*.jar
